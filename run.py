@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import (
@@ -16,6 +17,11 @@ CORS(app)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
+# ----------------------------------------------------
+#  NEW: Store deployment timestamp when server starts
+# ----------------------------------------------------
+DEPLOYMENT_TIME = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 # MODELS
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,7 +35,11 @@ class User(db.Model):
 # ROUTES
 @app.route("/")
 def home():
-    return {"message": "Flask API on Railway is live — minor update deployed via CI/CD."}
+    return {
+        "message": "Flask API is live (auto CI/CD deploy timestamp)",
+        "deployment_time": DEPLOYMENT_TIME,
+        "environment": os.environ.get("RAILWAY_ENVIRONMENT", "Local Machine")
+    }
 
 @app.route("/register", methods=["POST"])
 def register():
