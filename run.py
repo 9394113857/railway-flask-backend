@@ -29,7 +29,7 @@ class User(db.Model):
 # ROUTES
 @app.route("/")
 def home():
-    return {"message": "Flask API on Railway is running — small update deployed via CI/CD."}
+    return {"message": "Flask API on Railway is live — minor update deployed via CI/CD."}
 
 @app.route("/register", methods=["POST"])
 def register():
