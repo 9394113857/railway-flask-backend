@@ -1,0 +1,11 @@
+{
+  "name": "flask-backend-deta",
+  "services": [
+    {
+      "name": "api",
+      "engine": "python3.11",
+      "src": ".",
+      "run": "python3 main.py"
+    }
+  ]
+}
