@@ -13,13 +13,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Build Docker Image
-        run: docker build -t flask-app .
+      - name: Install Node (required for Railway CLI)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Login to Railway
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deploy to Railway
-        uses: railwayapp/cli-action@v1
-        with:
-          railwayToken: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway up --service railway-flask-backend --ci
 
       - name: Send Email on Success
         if: success()
@@ -31,8 +37,8 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Flask Railway Deployment Successful 🚀"
           to: "practicesession3@gmail.com"
-          from: "Flask Deployment Bot"
-          body: "Your Flask project was deployed successfully on Railway.\n\nCommit Message: ${{ github.event.head_commit.message }}"
+          from: "Flask CI/CD Bot"
+          body: "Your Flask project deployed successfully on Railway.\n\nCommit: ${{ github.event.head_commit.message }}"
 
       - name: Send Email on Failure
         if: failure()
@@ -42,7 +48,7 @@ jobs:
           server_port: 587
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "Flask Railway Deployment FAILED ❌"
+          subject: "❌ Flask Railway Deployment FAILED"
           to: "practicesession3@gmail.com"
-          from: "Flask Deployment Bot"
-          body: "Your Flask deployment failed. Please check the GitHub Actions logs for details."
+          from: "Flask CI/CD Bot"
+          body: "Deployment failed. Check GitHub Actions logs."
