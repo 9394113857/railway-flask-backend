@@ -10,6 +10,7 @@ from flask_jwt_extended import (
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
+import pytz   # 🔥 Added for timezone support (very important)
 
 # ----------------------------------------------------
 # APP INITIALIZATION
@@ -22,9 +23,14 @@ db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
 # ----------------------------------------------------
-# RUNTIME DEPLOYMENT TIMESTAMP (Visible in Railway)
+# SERVER DEPLOYMENT TIME (UTC)
+# Railway servers run on UTC or EU region time
 # ----------------------------------------------------
-DEPLOYMENT_TIME = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+utc_now = datetime.now(pytz.utc)
+
+# Convert to IST
+india_tz = pytz.timezone("Asia/Kolkata")
+ist_now = utc_now.astimezone(india_tz)
 
 
 # ----------------------------------------------------
@@ -41,15 +47,9 @@ class User(db.Model):
 
 
 # ----------------------------------------------------
-# UNIVERSAL ERROR HANDLER (Catches DB & Server Errors)
+# UNIVERSAL ERROR HANDLER
 # ----------------------------------------------------
 def handle_error(e):
-    """
-    Convert SQLAlchemy / system errors into clean JSON,
-    so Angular can show proper error messages.
-    """
-
-    # UNIQUE constraint / duplicate entries
     if isinstance(e, IntegrityError):
         message = str(e.orig)
 
@@ -63,22 +63,41 @@ def handle_error(e):
 
         return {"error": "Database integrity error", "details": message}, 400
 
-    # Any SQLAlchemy database-level errors
     if isinstance(e, SQLAlchemyError):
         return {"error": "Database error", "details": str(e)}, 500
 
-    # Everything else
     return {"error": "Unexpected server error", "details": str(e)}, 500
 
 
 # ----------------------------------------------------
-# HOME ROUTE - Shows deployment time (Railway Friendly)
+# HOME ROUTE — SHOW IST & UTC WITH FLAGS IN TABLE FORMAT
 # ----------------------------------------------------
 @app.route("/")
 def home():
+    # Refresh current times
+    utc_now = datetime.now(pytz.utc)
+    india_tz = pytz.timezone("Asia/Kolkata")
+    ist_now = utc_now.astimezone(india_tz)
+
+    # Table output with S.No + Country + Flag + Time
+    time_table = [
+        {
+            "sno": 1,
+            "country": "United Kingdom / UTC",
+            "flag": "🇬🇧",
+            "time": utc_now.strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "sno": 2,
+            "country": "India (IST)",
+            "flag": "🇮🇳",
+            "time": ist_now.strftime("%Y-%m-%d %H:%M:%S")
+        }
+    ]
+
     return {
         "message": "Flask API is live with CI/CD Auto Deploy",
-        "deployment_time": DEPLOYMENT_TIME,
+        "deployment_table": time_table,
         "environment": os.environ.get("RAILWAY_ENVIRONMENT", "Local Machine")
     }
 
@@ -91,7 +110,6 @@ def register():
     try:
         data = request.get_json()
 
-        # Simple required field validation
         if not data.get("username"):
             return {"error": "username is required"}, 400
         if not data.get("password"):
@@ -172,11 +190,11 @@ def profile():
 
 
 # ----------------------------------------------------
-# START SERVER (Railway picks PORT automatically)
+# START SERVER
 # ----------------------------------------------------
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()  # Safe: Creates only missing tables
+        db.create_all()
 
-    port = int(os.environ.get("PORT", 5000))  # Railway injects PORT
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
