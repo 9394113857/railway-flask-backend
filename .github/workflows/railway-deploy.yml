@@ -3,32 +3,25 @@ name: Flask Railway CI/CD
 on:
   push:
     branches:
-      - main       # Deploy only when main branch updates
+      - main   # Production branch
 
 jobs:
   deploy:
     name: Deploy Flask Backend to Railway
     runs-on: ubuntu-latest
+
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
       # ------------------------------------------------------
-      # 1️⃣ CHECKOUT CODE + FULL HISTORY (required for commit checkout)
+      # 1️⃣ CHECKOUT CODE
       # ------------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       # ------------------------------------------------------
-      # 2️⃣ CHECKOUT SPECIFIC COMMIT (Requested)
-      # ------------------------------------------------------
-      - name: Checkout Specific Commit
-        run: git checkout 2457d6db24fae889200dba6c7ccae16954a70503
-
-      # ------------------------------------------------------
-      # 3️⃣ SET UP PYTHON FOR FLASK PROJECT
+      # 2️⃣ SET UP PYTHON (Recommended for Flask Projects)
       # ------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -36,36 +29,36 @@ jobs:
           python-version: "3.11"
 
       # ------------------------------------------------------
-      # 4️⃣ INSTALL PYTHON DEPENDENCIES
+      # 3️⃣ INSTALL DEPENDENCIES
       # ------------------------------------------------------
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
       # ------------------------------------------------------
-      # 5️⃣ RUN DATABASE MIGRATIONS (Flask-Migrate)
+      # 4️⃣ RUN DATABASE MIGRATIONS (Flask-Migrate)
       # ------------------------------------------------------
       - name: Run DB Migrations
         run: |
           flask db upgrade
 
       # ------------------------------------------------------
-      # 6️⃣ INSTALL RAILWAY CLI
+      # 5️⃣ INSTALL RAILWAY CLI
       # ------------------------------------------------------
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
       # ------------------------------------------------------
-      # 7️⃣ DEPLOY TO RAILWAY (CI MODE → no login needed)
+      # 6️⃣ DEPLOY TO RAILWAY
       # ------------------------------------------------------
       - name: Deploy to Railway
         run: |
-          echo "Deploying Flask backend to Railway..."
+          echo "Deploying to Railway..."
           railway up --service railway-flask-backend --ci
 
       # ------------------------------------------------------
-      # 8️⃣ EMAIL NOTIFICATION — SUCCESS
+      # 7️⃣ EMAIL NOTIFICATION — SUCCESS
       # ------------------------------------------------------
       - name: Email Notification (SUCCESS)
         if: success()
@@ -79,13 +72,12 @@ jobs:
           to: "practicesession3@gmail.com"
           from: "Flask CI/CD Bot"
           body: |
-            ✔ Flask backend deployed successfully to Railway!
-            ✔ Commit ID: 2457d6db24fae889200dba6c7ccae16954a70503
-            ✔ Commit Message: ${{ github.event.head_commit.message }}
-            ✔ Time: ${{ github.event.head_commit.timestamp }}
+            🎉 Deployment was successful!
+            Commit Message: ${{ github.event.head_commit.message }}
+            Time: ${{ github.event.head_commit.timestamp }}
 
       # ------------------------------------------------------
-      # 9️⃣ EMAIL NOTIFICATION — FAILURE
+      # 8️⃣ EMAIL NOTIFICATION — FAILURE
       # ------------------------------------------------------
       - name: Email Notification (FAILURE)
         if: failure()
@@ -99,6 +91,5 @@ jobs:
           to: "practicesession3@gmail.com"
           from: "Flask CI/CD Bot"
           body: |
-            ❌ Deployment FAILED for Flask backend.
-            ❌ Commit ID: 2457d6db24fae889200dba6c7ccae16954a70503
-            See GitHub Actions logs for details.
+            ❌ Deployment failed.
+            View logs in GitHub Actions for details.
