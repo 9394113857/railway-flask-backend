@@ -18,6 +18,10 @@ Use this as your reference for ALL migration operations.
 SECTION 1: WHAT "flask db upgrade" DOES
 --------------------------------------------------------------
 
+pip install -r .\requirements.txt
+
+AND THEN RUN:-
+
 The command:
 
     flask db upgrade
@@ -54,6 +58,15 @@ SECTION 2: RUNNING "upgrade" MULTIPLE TIMES
    → No work needed
 
 This is normal and correct behavior.
+
+
+✔ Fix: Set FLASK_APP environment variable
+Windows PowerShell
+
+Run:
+$env:FLASK_APP = "run.py"
+
+flask run
 
 --------------------------------------------------------------
 SECTION 3: RULES FOR MIGRATIONS (VERY IMPORTANT)

@@ -3,7 +3,7 @@ name: Flask Railway CI/CD
 on:
   push:
     branches:
-      - main   # Production branch
+      - main        # Deploy only when main branch updates
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
 
       # ------------------------------------------------------
-      # 2️⃣ SET UP PYTHON (Recommended for Flask Projects)
+      # 2️⃣ SET UP PYTHON FOR FLASK PROJECT
       # ------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -31,7 +31,7 @@ jobs:
       # ------------------------------------------------------
       # 3️⃣ INSTALL DEPENDENCIES
       # ------------------------------------------------------
-      - name: Install Python Dependencies
+      - name: Install Dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
@@ -50,7 +50,7 @@ jobs:
         run: npm install -g @railway/cli
 
       # ------------------------------------------------------
-      # 6️⃣ DEPLOY TO RAILWAY
+      # 6️⃣ DEPLOY TO RAILWAY (CI MODE)
       # ------------------------------------------------------
       - name: Deploy to Railway
         run: |
@@ -72,7 +72,7 @@ jobs:
           to: "practicesession3@gmail.com"
           from: "Flask CI/CD Bot"
           body: |
-            🎉 Deployment was successful!
+            Deployment was successful!
             Commit Message: ${{ github.event.head_commit.message }}
             Time: ${{ github.event.head_commit.timestamp }}
 
@@ -91,5 +91,5 @@ jobs:
           to: "practicesession3@gmail.com"
           from: "Flask CI/CD Bot"
           body: |
-            ❌ Deployment failed.
-            View logs in GitHub Actions for details.
+            Deployment failed.
+            Check GitHub Actions logs for details.
