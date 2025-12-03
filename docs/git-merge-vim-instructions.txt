@@ -1,0 +1,187 @@
+=========================================================
+FULL MERGE WORKFLOW — FEATURE → MAIN  
+WITH VIM COMMANDS + CONFLICT FIX GUIDE
+=========================================================
+
+PROJECT: railway-flask-backend  
+FEATURE BRANCH: feature/sqlalchemy-migrations  
+TARGET BRANCH: main  
+
+This guide ensures:  
+✔ Feature branch is ready before merge  
+✔ No conflicts or broken files  
+✔ VIM commands included (very important)  
+✔ CI/CD triggers correctly after merge  
+
+=========================================================
+STEP 1 — START INSIDE FEATURE BRANCH
+=========================================================
+
+Run:
+
+    git checkout feature/sqlalchemy-migrations
+
+Verify:
+
+    git branch
+
+Expected:
+  * feature/sqlalchemy-migrations
+    main
+
+=========================================================
+STEP 2 — STAGE ALL FINAL CHANGES
+=========================================================
+
+Run:
+
+    git add .
+
+This captures:
+✔ migrations  
+✔ models  
+✔ workflow updates  
+✔ backend updates  
+✔ docs  
+
+=========================================================
+STEP 3 — COMMIT FINAL CHANGES
+=========================================================
+
+Run:
+
+    git commit -m "Final updates before merging into main"
+
+If Git says “nothing to commit”:
+
+    git commit --allow-empty -m "Preparing branch for merge"
+
+=========================================================
+STEP 4 — PUSH FEATURE BRANCH TO REMOTE
+=========================================================
+
+Run:
+
+    git push -u origin feature/sqlalchemy-migrations
+
+Ensures GitHub has the latest code.
+
+=========================================================
+STEP 5 — SWITCH TO MAIN BRANCH
+=========================================================
+
+Run:
+
+    git checkout main
+
+⚠️ If Git opens VIM unexpectedly during checkout, read section below.
+
+=========================================================
+VIM COMMANDS (IMPORTANT)
+=========================================================
+
+When VIM opens (merge message appears), do this:
+
+1️⃣ Press:
+    Esc
+
+2️⃣ To SAVE AND EXIT:
+    :wq
+    (then press ENTER)
+
+3️⃣ To EXIT WITHOUT SAVING:
+    :q!
+    (then press ENTER)
+
+You must remove conflict markers manually if conflict occurs:
+    <<<<<<< HEAD
+    =======
+    >>>>>>> branch-name
+
+=========================================================
+STEP 6 — UPDATE MAIN BRANCH
+=========================================================
+
+Run:
+
+    git pull origin main
+
+This makes sure main is synced with remote.
+
+=========================================================
+STEP 7 — MERGE FEATURE → MAIN
+=========================================================
+
+Run:
+
+    git merge feature/sqlalchemy-migrations
+
+If there are NO conflicts → Continue to Step 8.
+
+=========================================================
+IF MERGE CONFLICTS APPEAR (IMPORTANT)
+=========================================================
+
+Run:
+
+    code .
+
+Open the file with conflicts.  
+You will see:
+
+    <<<<<<< HEAD
+    old code
+    =======
+    new code
+    >>>>>>> feature/sqlalchemy-migrations
+
+FIX:
+✔ Keep only the new correct version  
+✔ Delete ALL conflict markers  
+
+Then run:
+
+    git add .
+    git commit -m "Resolved merge conflicts"
+
+Merge is now complete.
+
+=========================================================
+STEP 8 — PUSH MERGED MAIN (TRIGGERS CI/CD)
+=========================================================
+
+Run:
+
+    git push origin main
+
+This triggers:
+
+✔ Railway backend deployment  
+✔ Angular frontend deployment (if configured)  
+✔ SUCCESS email notification  
+✔ FAILURE email notification if error  
+
+=========================================================
+STEP 9 — OPTIONAL CLEANUP
+=========================================================
+
+Delete feature branch locally:
+
+    git branch -d feature/sqlalchemy-migrations
+
+Delete on remote:
+
+    git push origin --delete feature/sqlalchemy-migrations
+
+(Not required but recommended.)
+
+=========================================================
+SUMMARY (ONE LINE)
+=========================================================
+
+Feature → Main merge process:  
+ADD → COMMIT → PUSH → CHECKOUT MAIN → MERGE → FIX VIM/CONFLICTS → PUSH MAIN → CI/CD DEPLOYS AUTOMATICALLY
+
+=========================================================
+END OF FILE   
+=========================================================
