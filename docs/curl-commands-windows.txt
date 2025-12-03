@@ -1,0 +1,245 @@
+=========================================================
+FLASK API — COMPLETE WINDOWS cURL TEST SUITE (FINAL MASTER)
+CMD + POWERSHELL + TOKEN + EXPECTED OUTPUTS
+=========================================================
+
+BASE URL:
+  http://127.0.0.1:5000/api
+
+=========================================================
+0. CHECK USERS LIST (BEGINNING CHECK)
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users'
+
+EXPECTED:
+[]
+
+=========================================================
+1. CHECK SERVER HEALTH
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/'
+
+EXPECTED:
+{"message":"Flask API running with migrations"}
+
+=========================================================
+2. REGISTER USER
+=========================================================
+
+CMD:
+curl -X POST "http://127.0.0.1:5000/api/register" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"raghu\",\"password\":\"12345\",\"name\":\"Raghu\",\"email\":\"raghu@test.com\",\"phone\":\"9999999999\",\"address\":\"Hyderabad\"}"
+
+POWERSHELL:
+curl -X POST 'http://127.0.0.1:5000/api/register' `
+  -H 'Content-Type: application/json' `
+  -d '{"username":"raghu","password":"12345","name":"Raghu","email":"raghu@test.com","phone":"9999999999","address":"Hyderabad"}'
+
+EXPECTED:
+{"message":"Registered successfully"}
+
+=========================================================
+3. LOGIN → GET TOKEN
+=========================================================
+
+CMD:
+curl -X POST "http://127.0.0.1:5000/api/login" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"raghu\",\"password\":\"12345\"}"
+
+POWERSHELL:
+curl -X POST 'http://127.0.0.1:5000/api/login' `
+  -H 'Content-Type: application/json' `
+  -d '{"username":"raghu","password":"12345"}'
+
+EXPECTED:
+{"access_token":"<TOKEN>"}
+
+SAVE TOKEN FOR NEXT STEPS:
+
+CMD:
+set TOKEN=<TOKEN_VALUE>
+
+POWERSHELL:
+$env:TOKEN="<TOKEN_VALUE>"
+
+=========================================================
+4. GET PROFILE (AUTH REQUIRED)
+=========================================================
+
+CMD:
+curl -X GET "http://127.0.0.1:5000/api/profile" ^
+  -H "Authorization: Bearer %TOKEN%"
+
+POWERSHELL:
+curl -X GET 'http://127.0.0.1:5000/api/profile' `
+  -H "Authorization: Bearer $env:TOKEN"
+
+EXPECTED:
+{
+  "id":1,
+  "username":"raghu",
+  "name":"Raghu",
+  "email":"raghu@test.com",
+  "phone":"9999999999",
+  "address":"Hyderabad"
+}
+
+=========================================================
+5. LIST ALL USERS
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users'
+
+EXPECTED:
+[
+  {
+    "id":1,
+    "username":"raghu",
+    "name":"Raghu",
+    "email":"raghu@test.com",
+    "phone":"9999999999",
+    "address":"Hyderabad"
+  }
+]
+
+=========================================================
+6. GET USER BY ID
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users/1"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users/1'
+
+EXPECTED:
+{
+  "id":1,
+  "username":"raghu",
+  "name":"Raghu",
+  "email":"raghu@test.com",
+  "phone":"9999999999",
+  "address":"Hyderabad"
+}
+
+=========================================================
+7. UPDATE USER
+=========================================================
+
+CMD:
+curl -X PUT "http://127.0.0.1:5000/api/users/1" ^
+  -H "Content-Type: application/json" ^
+  -H "Authorization: Bearer %TOKEN%" ^
+  -d "{\"name\":\"Updated Raghu\",\"address\":\"Bangalore\"}"
+
+POWERSHELL:
+curl -X PUT 'http://127.0.0.1:5000/api/users/1' `
+  -H 'Content-Type: application/json' `
+  -H "Authorization: Bearer $env:TOKEN" `
+  -d '{"name":"Updated Raghu","address":"Bangalore"}'
+
+EXPECTED:
+{"message":"User updated successfully"}
+
+=========================================================
+8. VERIFY UPDATE
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users/1"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users/1'
+
+EXPECTED:
+{
+  "id":1,
+  "username":"raghu",
+  "name":"Updated Raghu",
+  "email":"raghu@test.com",
+  "phone":"9999999999",
+  "address":"Bangalore"
+}
+
+=========================================================
+9. LIST USERS (UPDATED)
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users'
+
+EXPECTED:
+[
+  {
+    "id":1,
+    "username":"raghu",
+    "name":"Updated Raghu",
+    "email":"raghu@test.com",
+    "phone":"9999999999",
+    "address":"Bangalore"
+  }
+]
+
+=========================================================
+10. DELETE USER
+=========================================================
+
+CMD:
+curl -X DELETE "http://127.0.0.1:5000/api/users/1" ^
+  -H "Authorization: Bearer %TOKEN%"
+
+POWERSHELL:
+curl -X DELETE 'http://127.0.0.1:5000/api/users/1' `
+  -H "Authorization: Bearer $env:TOKEN"
+
+EXPECTED:
+{"message":"User deleted successfully"}
+
+=========================================================
+11. VERIFY DELETE (GET BY ID)
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users/1"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users/1'
+
+EXPECTED:
+{"message":"User not found"}
+
+=========================================================
+12. FINAL USERS LIST (SHOULD BE EMPTY)
+=========================================================
+
+CMD:
+curl "http://127.0.0.1:5000/api/users"
+
+POWERSHELL:
+curl 'http://127.0.0.1:5000/api/users'
+
+EXPECTED:
+[]
+
+=========================================================
+END OF FILE — FINAL MASTER VERSION
+=========================================================

@@ -3,15 +3,20 @@ name: Flask Railway CI/CD
 on:
   push:
     branches:
-      - main
+      - main        # Deploy only when main branch updates
 
 jobs:
   deploy:
+    name: Deploy Flask Backend to Railway
     runs-on: ubuntu-latest
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
     steps:
+<<<<<<< HEAD
       # 1️⃣ Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -35,6 +40,55 @@ jobs:
 
       # 5️⃣ Email Notification — SUCCESS
       - name: Send Email on Success
+=======
+      # ------------------------------------------------------
+      # 1️⃣ CHECKOUT CODE
+      # ------------------------------------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # ------------------------------------------------------
+      # 2️⃣ SET UP PYTHON FOR FLASK PROJECT
+      # ------------------------------------------------------
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # ------------------------------------------------------
+      # 3️⃣ INSTALL DEPENDENCIES
+      # ------------------------------------------------------
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ------------------------------------------------------
+      # 4️⃣ RUN DATABASE MIGRATIONS (Flask-Migrate)
+      # ------------------------------------------------------
+      - name: Run DB Migrations
+        run: |
+          flask db upgrade
+
+      # ------------------------------------------------------
+      # 5️⃣ INSTALL RAILWAY CLI
+      # ------------------------------------------------------
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      # ------------------------------------------------------
+      # 6️⃣ DEPLOY TO RAILWAY (CI MODE)
+      # ------------------------------------------------------
+      - name: Deploy to Railway
+        run: |
+          echo "Deploying to Railway..."
+          railway up --service railway-flask-backend --ci
+
+      # ------------------------------------------------------
+      # 7️⃣ EMAIL NOTIFICATION — SUCCESS
+      # ------------------------------------------------------
+      - name: Email Notification (SUCCESS)
+>>>>>>> feature/sqlalchemy-migrations
         if: success()
         uses: dawidd6/action-send-mail@v3
         with:
@@ -46,12 +100,23 @@ jobs:
           to: "practicesession3@gmail.com"
           from: "Flask CI/CD Bot"
           body: |
+<<<<<<< HEAD
             Your Flask project deployed successfully on Railway.
             Commit Message: ${{ github.event.head_commit.message }}
             Time: ${{ github.event.head_commit.timestamp }}
 
       # 6️⃣ Email Notification — FAILURE
       - name: Send Email on Failure
+=======
+            Deployment was successful!
+            Commit Message: ${{ github.event.head_commit.message }}
+            Time: ${{ github.event.head_commit.timestamp }}
+
+      # ------------------------------------------------------
+      # 8️⃣ EMAIL NOTIFICATION — FAILURE
+      # ------------------------------------------------------
+      - name: Email Notification (FAILURE)
+>>>>>>> feature/sqlalchemy-migrations
         if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
@@ -63,4 +128,9 @@ jobs:
           to: "practicesession3@gmail.com"
           from: "Flask CI/CD Bot"
           body: |
+<<<<<<< HEAD
             Deployment failed. Please check GitHub Actions logs.
+=======
+            Deployment failed.
+            Check GitHub Actions logs for details.
+>>>>>>> feature/sqlalchemy-migrations

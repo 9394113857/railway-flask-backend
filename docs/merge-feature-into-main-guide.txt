@@ -1,0 +1,127 @@
+=========================================================
+MERGE FEATURE BRANCH INTO MAIN — COMPLETE SAFE GUIDE
+=========================================================
+
+PROJECT: railway-flask-backend
+FEATURE BRANCH: feature/sqlalchemy-migrations
+TARGET BRANCH: main
+
+This guide ensures:
+✔ No data loss
+✔ No conflicts
+✔ No accidental overwrite
+✔ Clean CI/CD trigger on main
+
+=========================================================
+STEP 1 — CHECK CURRENT BRANCH
+=========================================================
+Run:
+
+    git branch
+
+Expected:
+  * feature/sqlalchemy-migrations
+    main
+
+If NOT on feature branch, switch to it:
+
+    git checkout feature/sqlalchemy-migrations
+
+=========================================================
+STEP 2 — STAGE ALL CHANGES
+=========================================================
+Run:
+
+    git add .
+
+Explanation:
+Stages all modified files (workflow file, docs, migrations, etc.)
+
+=========================================================
+STEP 3 — COMMIT CHANGES
+=========================================================
+Run:
+
+    git commit -m "Final updates before merge: migrations + CI/CD"
+
+If message already exists, use:
+
+    git commit --amend
+
+or if no changes:
+
+    git commit --allow-empty -m "No changes but needed for merge"
+
+=========================================================
+STEP 4 — PUSH FEATURE BRANCH TO REMOTE
+=========================================================
+Run:
+
+    git push -u origin feature/sqlalchemy-migrations
+
+This ensures remote branch is up to date.
+
+=========================================================
+STEP 5 — SWITCH TO MAIN BRANCH
+=========================================================
+Now switching will NOT fail:
+
+    git checkout main
+
+=========================================================
+STEP 6 — UPDATE MAIN BRANCH (VERY IMPORTANT)
+=========================================================
+Run:
+
+    git pull origin main
+
+Ensures you have the latest CI/CD and backend code.
+
+=========================================================
+STEP 7 — MERGE FEATURE → MAIN
+=========================================================
+Run:
+
+    git merge feature/sqlalchemy-migrations
+
+If no conflicts → SUCCESS 🎉
+
+If conflicts → VSCode will show them → Fix → Then:
+
+    git add .
+    git commit -m "Resolved conflicts during merge"
+
+=========================================================
+STEP 8 — PUSH MERGED MAIN TO REMOTE
+=========================================================
+Run:
+
+    git push origin main
+
+🎯 This will trigger your CI/CD:
+  • Railway deployment
+  • Netlify/Angular deployment (if configured)
+
+=========================================================
+STEP 9 — OPTIONAL CLEANUP
+=========================================================
+After merge, delete local feature branch:
+
+LOCAL delete:
+    git branch -d feature/sqlalchemy-migrations
+
+REMOTE delete:
+    git push origin --delete feature/sqlalchemy-migrations
+
+=========================================================
+FINAL NOTES
+=========================================================
+✔ Your backend is stable  
+✔ Angular integration tested  
+✔ Migrations working  
+✔ CI/CD tested  
+✔ Safe to merge  
+
+=========================================================
+END OF FILE
+=========================================================
