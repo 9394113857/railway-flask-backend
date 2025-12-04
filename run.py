@@ -4,19 +4,21 @@ import os
 
 app = create_app()
 
-# ---------------------------------------------
-# LOCAL DEVELOPMENT ONLY: Auto-create tables
-# ---------------------------------------------
-# Detect SQLite local environment
-IS_LOCAL = "DATABASE_URL" not in os.environ
+# --------------------------------------------------
+# LOCAL DEVELOPMENT (SQLite auto create tables)
+# --------------------------------------------------
+# Railway sets DATABASE_URL → so IS_LOCAL = False
+IS_LOCAL = os.getenv("DATABASE_URL") is None
 
 if IS_LOCAL:
     with app.app_context():
         db.create_all()
-        print("✔ Local SQLite tables created.")
+        print("✔ Local SQLite tables created automatically.")
+else:
+    print("✔ Running in PRODUCTION mode (Railway/PostgreSQL).")
 
-# ---------------------------------------------
-# NORMAL FLASK RUN
-# ---------------------------------------------
+# --------------------------------------------------
+# NORMAL FLASK RUN (local only)
+# --------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
