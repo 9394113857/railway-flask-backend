@@ -7,10 +7,16 @@ from app.extensions import db
 
 auth_bp = Blueprint("auth", __name__)
 
+# -------------------------------------------
+# HEALTH CHECK
+# -------------------------------------------
 @auth_bp.get("/")
 def home():
     return {"message": "Flask API running with PostgreSQL + migrations"}
 
+# -------------------------------------------
+# REGISTER
+# -------------------------------------------
 @auth_bp.post("/register")
 def register():
     data = request.json
@@ -34,7 +40,9 @@ def register():
 
     return {"message": "Registration successful"}, 201
 
-
+# -------------------------------------------
+# LOGIN
+# -------------------------------------------
 @auth_bp.post("/login")
 def login():
     data = request.json
@@ -47,7 +55,9 @@ def login():
 
     return {"access_token": token}
 
-
+# -------------------------------------------
+# PROFILE
+# -------------------------------------------
 @auth_bp.get("/profile")
 @jwt_required()
 def profile():
@@ -62,3 +72,14 @@ def profile():
         "phone": user.phone,
         "address": user.address
     }
+
+# -------------------------------------------
+# 🔥 TEST DATABASE CONNECTION
+# -------------------------------------------
+@auth_bp.get("/test-db")
+def test_db():
+    try:
+        count = User.query.count()
+        return {"ok": True, "db": "connected", "users": count}, 200
+    except Exception as e:
+        return {"ok": False, "db": "error", "message": str(e)}, 500
