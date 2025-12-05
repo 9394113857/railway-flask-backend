@@ -5,21 +5,17 @@ import os
 # Create the Flask application
 app = create_app()
 
-# --------------------------------------------------
-# LOCAL DEVELOPMENT (SQLite auto create tables)
-# --------------------------------------------------
-# Railway sets DATABASE_URL → so IS_LOCAL = False
+# Detect if local (SQLite) or Railway (PostgreSQL)
 IS_LOCAL = os.getenv("DATABASE_URL") is None
 
 if IS_LOCAL:
+    # Auto-create SQLite tables on local machine
     with app.app_context():
         db.create_all()
         print("✔ Local SQLite tables created automatically.")
 else:
     print("✔ Running in PRODUCTION mode (Railway/PostgreSQL).")
 
-# --------------------------------------------------
-# NORMAL FLASK RUN (local only)
-# --------------------------------------------------
+# Local run only
 if __name__ == "__main__":
     app.run()

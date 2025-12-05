@@ -5,6 +5,8 @@ py -m venv env
 1️⃣ Install dependencies
 pip install -r requirements.txt
 
+python.exe -m pip install --upgrade pip
+
 
 ✔ Fix: Set FLASK_APP environment variable
 Windows PowerShell

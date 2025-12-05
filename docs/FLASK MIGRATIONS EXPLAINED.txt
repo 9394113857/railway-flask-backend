@@ -3,9 +3,10 @@ FLASK MIGRATIONS EXPLAINED.txt
 ===============================
 
 This file explains what happens during:
-1) flask db init
-2) flask db migrate
-3) flask db upgrade
+ 
+flask db init 
+flask db migrate
+flask db upgrade
 
 
 ======================================

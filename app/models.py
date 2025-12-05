@@ -1,7 +1,8 @@
-from app.extensions import db
+from app.extensions import db   # ✅ REQUIRED for models + migrations
+
 
 class User(db.Model):
-    __tablename__ = "users"  # 🔥 VERY IMPORTANT
+    __tablename__ = "users"   # ✅ correct table name
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
