@@ -16,5 +16,7 @@ ENV PORT=5000
 # Expose port for Railway
 EXPOSE 5000
 
-# Start the app via gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "run:app"]
+# ---------------------------------------------------------
+# Run database migrations automatically BEFORE starting app
+# ---------------------------------------------------------
+CMD flask db upgrade && gunicorn -b 0.0.0.0:5000 run:app
